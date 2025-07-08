@@ -267,12 +267,15 @@ button:hover {
     inner.appendChild(back);
     cardDiv.appendChild(inner);
 
+    cardDiv.onclick = () => {
+      cardDiv.classList.toggle("flipped");
+    };
+
     container.appendChild(cardDiv);
   });
 }
 
-
-
+    
 
 
 
