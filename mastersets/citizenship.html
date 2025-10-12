@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Citizenship Flashcards</title>
+  <style>
+@font-face {
+    font-family: Fira Code;
+    src: url(../assets/fonts/FiraCode-Light.woff2) format("woff2");
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: Fira Code;
+    src: url(../assets/fonts/FiraCode-Regular.woff2) format("woff2");
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: Fira Code;
+    src: url(../assets/fonts/FiraCode-Medium.woff2) format("woff2");
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: Fira Code;
+    src: url(../assets/fonts/FiraCode-SemiBold.woff2) format("woff2");
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: Fira Code;
+    src: url(../assets/fonts/FiraCode-Bold.woff2) format("woff2");
+    font-weight: 700;
+    font-style: normal;
+}
+
+* {
+  -webkit-user-select: none; 
+  -moz-user-select: none;    
+  -ms-user-select: none;     
+  user-select: none;         
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Fira Code, monospace;
+    -webkit-font-smoothing: antialiased;
+    font-size: 1.2rem;
+    background-color: #1e1e1e;
+    color: #f5f5f5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 50px;
+}
+
+h2 {
+    margin-top: 40px;
+    color: #ffcc70;
+    border-bottom: 1px solid #444;
+    padding-bottom: 5px;
+}
+
+ul {
+  text-align: left;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+.font-semibold {
+    font-weight: 600;
+}
+.font-medium {
+    font-weight: 500;
+}
+.font-regular {
+    font-weight: 400;
+}
+.font-light {
+    font-weight: 300;
+}
+
+.flashcard-set {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  column-gap: 55px;
+  row-gap: 15px;
+  width: 90%;
+  max-width: 1200px;
+  margin-bottom: 40px;
+  justify-items: center;
+}
+
+.flashcard {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    width: 350px;
+    height: 150px;
+    padding: 15px;
+    border: 1px solid #333;
+    border-radius: 12px;
+    background: #2a2a2a;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    font-size: 1em;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.flashcard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.6);
+}
+
+.card-inner {
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    position: relative;
+}
+
+.flashcard.flipped .card-inner {
+    transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0; left: 0;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.card-front {
+    background-color: #2a2a2a;
+    color: #f5f5f5;
+}
+
+.card-back {
+    background-color: #393e46;
+    color: #d2f1ff;
+    transform: rotateY(180deg);
+}
+
+button {
+    background-color: #3b3b3b;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    margin-bottom: 30px;
+    font-family: inherit;
+    -webkit-font-smoothing: antialiased;
+    font-size: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background-color: #505050;
+}
+
+::-webkit-scrollbar {
+    height: 10px;
+}
+::-webkit-scrollbar-track {
+    background: #1e1e1e;
+}
+::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #888;
+}
+
+.katex {
+   display: inline-block;
+   vertical-align: baseline;
+   }
+
+.flashcard-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+}
+
+.math-expression {
+  margin: 0.5em 0;
+}
+
+.label {
+  margin: 0.5em 0;
+}
+</style>
+</head>
+  <body>
+
+    <h2>Master Set</h2>
+    <button onclick="shuffleCards('set1')">Shuffle Master Set</button>
+    <div style="width: 100%; display: flex; justify-content: center;">
+      <div class="flashcard-set" id="masterset"></div>
+    </div>
+
+    <div class="hidden-data">
+      <div data-set="masterset">
+        <div data-front="Question 1: <br/> <br/> What is the supreme law of the land?" data-back="The Constitution"></div>
+        <div data-front="Question 2: <br/> <br/> What does the Constitution do?" data-back="<ul><li>Sets up the government</li><li>Defines the government</li><li>Protects basic rights of Americans</li></ul>"></div>
+        <div data-front="Question 3: <br/> <br/> The idea of self-government is the first three words of the Constitution. What are these words?" data-back="&quot;We the People&quot;"></div>
+        <div data-front="Question 4: <br/> <br/> What is an amendment?" data-back="<ul><li>A change (to the constitution)</li><li>an addition (to the Constitution)</li></ul>"></div>
+        <div data-front="Question 5: <br/> <br/> What do we call the first ten amendments to the Constitution?" data-back="<ul><li>The Bill of Rights</li></ul>"></div>
+        <div data-front="Question 6: <br/> <br/> <span style='display: inline;'>What is <u>one</u> right or freedom from the First Amendment?*</span>" data-back="<ul><li>Speech</li><li>Religion</li></ul>"></div>
+        <div data-front="Question 7: <br/> <br/> How many ammendments does the Costitution have?" data-back="<ul><li>twenty seven</li></ul>"></div>
+        <div data-front="Question 8: <br/> <br/> What did the Declaration of Independence do?" data-back="<ul><li>Declared our Independence from Great Britain</li></ul>"></div>
+        <div data-front="Question 9: <br/> <br/> <span style='display: inline;'>What are <u>two</u> rights in the Declaration of Indepencence?</span>" data-back="<ul><li>Life and liberty</li></ul>"></div>
+        <div data-front="Question 10: <br/> <br/> What is freedom of religion? " data-back="<ul><li>To pratice any relition or not pratice any religion</li></ul>"></div>
+        <div data-front="Question 11: <br/> <br/> What is the economic system in the United States?" data-back="<ul><li>Capitalist Economy</li></ul>"></div>
+        <div data-front="Question 12: <br/> <br/> What is the rule of the law?" data-back="<ul><li>No one is above the law</li></ul>"></div>
+        <div data-front="Question 13: <br/> <br/> <span style='display: inline;'>Name <u>one</u> branch or part of government.*</span>" data-back="<ul><li>Congress/Legislative</li><li>President/Executive</li><li>The Courts/Judicial</li></ul>"></div>
+        <div data-front="Question 14: <br/> <br/> <span style='display: inline;'>What stops <u>one</u> branch of Government from becoming too powerful?</span>" data-back="<ul><li>checks and balances</li></ul>"></div>
+        <div data-front="Question 15: <br/> <br/> Who is in charge of the Executive Branch?" data-back="<ul><li>The President</li></ul>"></div>
+        <div data-front="Question 16: <br/> <br/> Who makes federal laws?" data-back="<ul><li>The Congress</li></ul>"></div>
+        <div data-front="Question 17: <br/> <br/> <span style='display: inline;'>What are the <u>two</u> parts of the U.S. Congress?*</span>" data-back="<ul><li>The Senate and House</li></ul>"></div>
+        <div data-front="Question 18: <br/> <br/> How many US Senators are there?" data-back="<ul><li>One Hundred (100)</li></ul>"></div>
+        <div data-front="Question 19: <br/> <br/> We elect a US Senator for how many years?" data-back="<ul><li>Six (6)</li></ul>"></div>
+        <div data-front="Question 20: <br/> <br/> <span style='display: inline;'>Who is <u>one</u> of your State's Senators now?</span>" data-back="<ul><li>Alex Padilla</li></ul>"></div>
+        <div data-front="Question 21: <br/> <br/> The House of Representatives has how many voting members?" data-back="<ul><li>435</li></ul>"></div>
+        <div data-front="Question 22: <br/> <br/> We elect a US representative for how many years?" data-back="<ul><li>Two (2)</li></ul>"></div>
+        <div data-front="Question 23: <br/> <br/> Name your US Representative" data-back="<ul><li>Nancy Pelosi</li></ul>"></div>
+        <div data-front="Question 24: <br/> <br/> Who does a US Senator represent?" data-back="<ul><li>All people of the state</li></ul>"></div>
+        <div data-front="Question 25: <br/> <br/> Why some states have more representatives than other states?" data-back="<ul><li>Because of the state's population</li></ul>"></div>
+        <div data-front="Question 26: <br/> <br/> We elect a President for how many years?" data-back="<ul><li>Four (4)</li></ul>"></div>
+        <div data-front="Question 27: <br/> <br/> In what month do we vote for President?" data-back="<ul><li>November</li></ul>"></div>
+        <div data-front="Question 28: <br/> <br/> What is the name of the President of the US now?" data-back="<ul><li>Donald Trump</li></ul>"></div>
+        <div data-front="Question 29: <br/> <br/> What is the name of the Vice President of the US now?" data-back="<ul><li>JD Vance</li></ul>"></div>
+        <div data-front="Question 30: <br/> <br/> If the President can no longer serve, who becomes the President?" data-back="<ul><li>The Vice President</li></ul>"></div>
+        <div data-front="Question 31: <br/> <br/> If both the President and the Vice President can no longer serve, who becomes President?" data-back="<ul><li>The Speaker of the House</li></ul>"></div>
+        <div data-front="Question 32: <br/> <br/> Who is the Commander in Chief of the military?" data-back="<ul><li>The President</li></ul>"></div>
+        <div data-front="Question 33: <br/> <br/> Who signs bills to become laws?" data-back="<ul><li>The President</li></ul>"></div>
+        <div data-front="Question 34: <br/> <br/> Who vetoes bills?" data-back="<ul><li>The President</li></ul>"></div>
+        <div data-front="Question 35: <br/> <br/> What does the President's cabinet do?" data-back="<ul><li>Advises the President</li></ul>"></div>
+        <div data-front="Question 36: <br/> <br/> <span style='display: inline;'>What are <u>two</u> cabinet-level positions?</span>" data-back="<ul><li>Secretary of Agrirculture</li><li>Secretary of Education</li></ul>"></div>
+        <div data-front="Question 37: <br/> <br/> What does the Judicial branch do?" data-back="<ul><li>Reviews laws</li></ul>"></div>
+        <div data-front="Question 38: <br/> <br/> What is the highest court in the United States?" data-back="<ul><li>The Supreme Court</li></ul>"></div>
+        <div data-front="Question 39: <br/> <br/> How many Justices are on the Supreme Court?" data-back="<ul><li>Nine (9)</li></ul>"></div>
+        <div data-front="Question 40: <br/> <br/> Who is the Chief Justice of the United States now?" data-back="<ul><li>John Roberts</li></ul>"></div>
+        <div data-front="Question 41: <br/> <br/> <span style='display: inline;'>Under our Constitution, some powers belong to the Federal Government. What is <u>one</u> power of the Federal Government?" data-back="<ul><li>To print money</li></ul>"></div>
+        <div data-front="Question 42: <br/> <br/> <span style='display: inline;'>Under our Constitution, some power belong to the States. What is <u>one</u> power of the States?</span>" data-back="<ul><li>To give a driver's license</li></ul>"></div>
+        <div data-front="Question 43: <br/> <br/> Who is the governor of your state now?" data-back="<ul><li>Gavin Newson</li></ul>"></div>
+        <div data-front="Question 44: <br/> <br/> What is the capital of your state?" data-back="<ul><li>Sacramento</li></ul>"></div>
+        <div data-front="Question 45: <br/> <br/> <span style='display: inline;'>What are the <u>two</u> major political parties in the US?</span>" data-back="<ul><li>Democratic and Republican</li></ul>"></div>
+        <div data-front="Question 46: <br/> <br/> What is the political party of the President now?" data-back="<ul><li>Republican</li></ul>"></div>
+        <div data-front="Question 47: <br/> <br/> What is the name of the Speaker of the House of Representatives now?" data-back="<ul><li>Mike Johnson</li></ul>"></div>
+        <div data-front="Question 48: <br/> <br/> There are four ammendments to the Constitution about who can vote. Describe one of them." data-back="<ul><li>Citizens 18 or older can vote</li></ul>"></div>
+        <div data-front="Question 49: <br/> <br/> <span style='display: inline;'>What is <u>one</u> responsibility that is only for United States citizens?</span>" data-back="<ul><li>Vote in a Federal election</li></ul>"></div>
+        <div data-front="Question 50: <br/> <br/> <span style='display: inline;'>Name <u>one</u> right only for US Citizens.</span>" data-back="<ul><li>Vote in a Federal Election</li></ul>"></div>
+        <div data-front="Question 51: <br/> <br/> <span style='display: inline;'>What are <u>two</u> rights of everyone living in the United States?</span>" data-back="<ul><li>Freedom of religion</li><li>Freedom of speech</li>"></div>
+        <div data-front="Question 52: <br/> <br/> What do we show loyalty to when we say the Pledge of Allegiance" data-back="<ul><li>The United States</li>"></div>
+        <div data-front="Question 53: <br/> <br/> What is <u>one</u> promise you make when you become a citizen of the United States?" data-back="<ul><li>Give up loyalty to other countries</li>"></div>
+        <div data-front="Question 54: <br/> <br/> How old to citizens have to be to vote for president?" data-back="<ul><li>Eighteen (18)</li>"></div>
+        <div data-front="Question 55: <br/> <br/> <span style='display: inline;'>What are <u>two</u> ways Americans can participate in their democracy?</span>" data-back="<ul><li>Vote</li><li>Join a political party</li>"></div>
+        <div data-front="Question 56: <br/> <br/> When is the last day you can send in Federal Income Tax Forms?" data-back="<ul><li>April 15</li>"></div>
+        <div data-front="Question 57: <br/> <br/> When must all men register for the Selective Service?" data-back="<ul><li>At the age of 18</li>"></div>
+        <div data-front="Question 58: <br/> <br/> What is one reason colonists came to America?" data-back="<ul><li>Freedom</li>"></div>
+        <div data-front="Question 59: <br/> <br/> Who lived in American before the Europeans arrived?" data-back="<ul><li>Native Americans</li>"></div>
+        <div data-front="Question 60: <br/> <br/> What group of people was taken to America and sold as slaves?" data-back="<ul><li>Africans</li>"></div>
+        <div data-front="Question 61: <br/> <br/> Why did the colonists fight the British?" data-back="<ul><li>Because of high taxes</li><li>Because the British Army stayed in their homes</li><li>Because they didn't have self-government</li>"></div>
+        <div data-front="Question 62: <br/> <br/> Who wrote the Declaration of Indepencence?" data-back="<ul><li>Thomas Jefferson</li>"></div>
+        <div data-front="Question 63: <br/> <br/> When was the Declaration of Independence adopted?" data-back="<ul><li>July 4, 1776</li>"></div>
+        <div data-front="Question 64: <br/> <br/> There were 13 original states. Name three" data-back="<ul><li>Pennsylvania</li><li>New York</li><li>New Jersey</li>"></div>
+        <div data-front="Question 65: <br/> <br/> What happened at the Constitutional Convention?" data-back="<ul><li>The Constitution was written</li>"></div>
+        <div data-front="Question 66: <br/> <br/> When was the Constitution written?" data-back="<ul><li>1787</li>"></div>
+        <div data-front="Question 67: <br/> <br/> The federal papers supported the passage of the US Constitution. Name one of the writters." data-back="<ul><li>James Madison</li>"></div>
+        <div data-front="Question 68: <br/> <br/> What is one thing Benjamin Franklin is famous for." data-back="<ul><li>Started the first public library</li>"></div>
+        <div data-front="Question 69: <br/> <br/> Who is the father of our country?" data-back="<ul><li>George Washington</li>"></div>
+        <div data-front="Question 70: <br/> <br/> Who was the first President?" data-back="<ul><li>George Washington</li>"></div>
+        <div data-front="Question 71: <br/> <br/> What territory did the United States buy from France in 1803?" data-back="<ul><li>Louisiana</li>"></div>
+        <div data-front="Question 72: <br/> <br/> Name one war fought by the United States in the 1800s" data-back="<ul><li>Civil War</li>"></div>
+        <div data-front="Question 73: <br/> <br/> Name the war between the North and the South" data-back="<ul><li>Civil War</li>"></div>
+        <div data-front="Question 74: <br/> <br/> Name one problem that led to the Civil War" data-back="<ul><li>Slavery</li>"></div>
+        <div data-front="Question 75: <br/> <br/> What was one important thing that Abraham Lincoln did?" data-back="<ul><li>Freed the slaves</li>"></div>
+        <div data-front="Question 76: <br/> <br/> What did the Emancipation Proclamation do?" data-back="<ul><li>Freed the slaves</li>"></div>
+        <div data-front="Question 77: <br/> <br/> What did Susan B. Anthony do?" data-back="<ul><li>Fought for Women's rights</li>"></div>
+        <div data-front="Question 78: <br/> <br/> Name one war fought by the US in the 1900s" data-back="<ul><li>World War I</li>"></div>
+        <div data-front="Question 79: <br/> <br/> Who was the President during WWI" data-back="<ul><li>(Woodrow) Wilson</li>"></div>
+        <div data-front="Question 80: <br/> <br/> Who was the President during the Great Depression and World War II?" data-back="<ul><li>(Franklin) Rosevelt</li>"></div>
+        <div data-front="Question 81: <br/> <br/> Who did the United States fight in World War II?" data-back="<ul><li>Japan, Germany, and Italy</li>"></div>
+        <div data-front="Question 82: <br/> <br/> Before he was a President, Eisenhower was a General. What war was he in?" data-back="<ul><li>World War II</li>"></div>
+        <div data-front="Question 83: <br/> <br/> During the Cold War, what was the main concern of the United States?" data-back="<ul><li>Communism</li>"></div>
+        <div data-front="Question 84: <br/> <br/> What movement tried to end racial discrimination?" data-back="<ul><li>Civil rights</li>"></div>
+        <div data-front="Question 85: <br/> <br/> What did Martin Luther King, Jr do?" data-back="<ul><li>Fought for Civil Rights</li>"></div>
+        <div data-front="Question 86: <br/> <br/> What major event happened on September 11, 2001?" data-back="<ul><li>Terrorists attacked the US</li>"></div>
+        <div data-front="Question 87: <br/> <br/> Name one American Indian Tribe" data-back="<ul><li>Navajo</li>"></div>
+        <div data-front="Question 88: <br/> <br/> Name one of the two longest rivers." data-back="<ul><li>Mississippi</li>"></div>
+        <div data-front="Question 89: <br/> <br/> What ocean is on the West Coast of the US?" data-back="<ul><li>Pacific</li>"></div>
+        <div data-front="Question 90: <br/> <br/> What ocean is on the East Coast of the US?" data-back="<ul><li>Atlantic</li>"></div>
+        <div data-front="Question 91: <br/> <br/> Name one US territory." data-back="<ul><li>Guam</li>"></div>
+        <div data-front="Question 92: <br/> <br/> Name one state that borders Canada" data-back="<ul><li>Washington</li>"></div>
+        <div data-front="Question 93: <br/> <br/> Name one state that borders Mexico" data-back="<ul><li>California</li>"></div>
+        <div data-front="Question 94: <br/> <br/> What is the capital of the United States" data-back="<ul><li>Washington DC</li>"></div>
+        <div data-front="Question 95: <br/> <br/> Where is the Statue of Liberty?" data-back="<ul><li>New York Harbor</li><li>Liberty Island</li>"></div>
+        <div data-front="Question 96: <br/> <br/> Why does the flag have 13 stripes?" data-back="<ul><li>The stripes represent the original 13 colonies</li>"></div>
+        <div data-front="Question 97: <br/> <br/> Why does the flag have 50 stars?" data-back="<ul><li>Because each star represents one state</li>"></div>
+        <div data-front="Question 98: <br/> <br/> What is the name of the National Anthem?" data-back="<ul><li>The Star-Spangled Banner</li>"></div>
+        <div data-front="Question 99: <br/> <br/> When do we celebrate Indepence Day?" data-back="<ul><li>Juy 4</li>"></div>
+        <div data-front="Question 100: <br/> <br/> Name two National US holidays" data-back="<ul><li>Labor Day</li><li>Christmas</li>"></div>
+      </div>
+    </div>
+
+    <!-- 
+    <div data-front="<ul><li>    </li><li>    </li></ul>" data-back="back"></div>
+    
+    -->
+
+  <script>
+    const flashcardSets = {};
+
+    function loadFlashcards() {
+      document.querySelectorAll('[data-set]').forEach(setDiv => {
+        const setId = setDiv.getAttribute('data-set');
+        const cards = [];
+
+        setDiv.querySelectorAll('[data-front]').forEach(cardDiv => {
+          cards.push({
+            front: cardDiv.getAttribute('data-front'),
+            back: cardDiv.getAttribute('data-back')
+          });
+        });
+
+        flashcardSets[setId] = cards;
+        renderFlashcards(setId);
+      });
+    }
+
+    function renderFlashcards(setId) {
+  const container = document.getElementById(setId);
+  container.innerHTML = '';
+
+  flashcardSets[setId].forEach((card, idx) => {
+    const cardDiv = document.createElement("div");
+    cardDiv.className = "flashcard";
+
+    const inner = document.createElement("div");
+    inner.className = "card-inner";
+
+    const front = document.createElement("div");
+    front.className = "card-front";
+    front.innerHTML = card.front;
+
+    const back = document.createElement("div");
+    back.className = "card-back";
+    back.innerHTML = card.back;
+
+    inner.appendChild(front);
+    inner.appendChild(back);
+    cardDiv.appendChild(inner);
+
+    cardDiv.onclick = () => {
+      cardDiv.classList.toggle("flipped");
+    };
+
+    container.appendChild(cardDiv);
+  });
+}
+
+    
+
+
+
+    function shuffleCards(setId) {
+      const cards = flashcardSets[setId];
+      for (let i = cards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cards[i], cards[j]] = [cards[j], cards[i]];
+      }
+      renderFlashcards(setId);
+    }
+
+    window.onload = loadFlashcards;
+  </script>
+</body>
+</html>
